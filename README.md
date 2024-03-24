@@ -1,1 +1,1 @@
-# 3D-Cube-Renderer
+# 3D Graphics Renderer
