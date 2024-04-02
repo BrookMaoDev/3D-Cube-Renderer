@@ -2,7 +2,6 @@
 #define CUBE_H
 
 #include "SDL.h"
-#include <cmath>
 
 class Cube
 {
@@ -14,15 +13,18 @@ private:
     static const int Y_INDEX = 1;
     static const int Z_INDEX = 2;
 
-    const int THETA = 1;
+    const double THETA = 0.01;
 
+    int CENTER_X;
+    int CENTER_Y;
     int pts_in_3d[NUM_PTS][DIMENSION];
     int pts_in_2d[NUM_PTS][SCREEN_DIMENSION];
 
     void draw_line(SDL_Renderer *renderer, int p1[SCREEN_DIMENSION], int p2[SCREEN_DIMENSION]);
+    void project();
 
 public:
-    Cube(int pts_in_3d[NUM_PTS][DIMENSION]);
+    Cube(int CENTER_X, int CENTER_Y, int width);
     ~Cube();
 
     void draw_cube(SDL_Renderer *renderer);

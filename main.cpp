@@ -8,12 +8,14 @@
 #include "SDL.h"
 #include "cube.hpp"
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 800;
 const int WINDOW_CENTER_X = SCREEN_WIDTH / 2;
 const int WINDOW_CENTER_Y = SCREEN_HEIGHT / 2;
-const int CUBE_WIDTH = 200;
+const int CUBE_WIDTH = 100;
 const int HALF_CUBE_WIDTH = CUBE_WIDTH / 2;
+const int FPS = 60;
+const int DELAY_TIME = 1000 / FPS;
 
 int main(int argc, char *args[])
 {
@@ -34,21 +36,8 @@ int main(int argc, char *args[])
     }
 
     SDL_SetWindowTitle(window, "3D Graphics Engine");
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    int cubeVertices[8][3] = {
-        // Front face vertices
-        {WINDOW_CENTER_X - HALF_CUBE_WIDTH, WINDOW_CENTER_Y - HALF_CUBE_WIDTH, 0}, // Bottom left front
-        {WINDOW_CENTER_X + HALF_CUBE_WIDTH, WINDOW_CENTER_Y - HALF_CUBE_WIDTH, 0}, // Bottom right front
-        {WINDOW_CENTER_X + HALF_CUBE_WIDTH, WINDOW_CENTER_Y + HALF_CUBE_WIDTH, 0}, // Top right front
-        {WINDOW_CENTER_X - HALF_CUBE_WIDTH, WINDOW_CENTER_Y + HALF_CUBE_WIDTH, 0}, // Top left front
-        // Back face vertices
-        {WINDOW_CENTER_X - HALF_CUBE_WIDTH, WINDOW_CENTER_Y - HALF_CUBE_WIDTH, CUBE_WIDTH}, // Bottom left back
-        {WINDOW_CENTER_X + HALF_CUBE_WIDTH, WINDOW_CENTER_Y - HALF_CUBE_WIDTH, CUBE_WIDTH}, // Bottom right back
-        {WINDOW_CENTER_X + HALF_CUBE_WIDTH, WINDOW_CENTER_Y + HALF_CUBE_WIDTH, CUBE_WIDTH}, // Top right back
-        {WINDOW_CENTER_X - HALF_CUBE_WIDTH, WINDOW_CENTER_Y + HALF_CUBE_WIDTH, CUBE_WIDTH}  // Top left back
-    };
-    Cube cube(cubeVertices);
+    Cube cube(WINDOW_CENTER_X, WINDOW_CENTER_Y, CUBE_WIDTH);
 
     SDL_Event e;
     bool quit = false;
@@ -61,7 +50,13 @@ int main(int argc, char *args[])
                 quit = true;
         }
 
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        SDL_RenderClear(renderer);
+
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         cube.draw_cube(renderer);
-        SDL_RenderPresent(renderer);
+        cube.rotate_cube();
+
+        SDL_Delay(DELAY_TIME);
     }
 }

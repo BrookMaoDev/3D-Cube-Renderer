@@ -1,7 +1,8 @@
+#include <vector>
 
 const int DIMENSION = 3;
 
-void rotate_pts_x(int p[DIMENSION], int theta);
-void rotate_pts_y(int p[DIMENSION], int theta);
-void rotate_pts_z(int p[DIMENSION], int theta);
-void matrix_vector_multiply(float **matrix, int vector[], int dim);
+void rotate_pt_x(int p[DIMENSION], double theta);
+void rotate_pt_y(int p[DIMENSION], double theta);
+void rotate_pt_z(int p[DIMENSION], double theta);
+void matrix_vector_multiply(std::vector<std::vector<double>> &matrix, int vector[], int dim);
