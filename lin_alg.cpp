@@ -13,7 +13,7 @@ void matrix_vector_multiply(std::vector<std::vector<double>> &matrix, int vector
         {
             new_entry += matrix[row][col] * vector[col];
         }
-        new_vector[row] = ceil(new_entry);
+        new_vector[row] = new_entry;
     }
 
     for (int i = 0; i < dim; i++)

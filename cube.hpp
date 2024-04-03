@@ -12,11 +12,11 @@ private:
     static const int X_INDEX = 0;
     static const int Y_INDEX = 1;
     static const int Z_INDEX = 2;
-
     const double THETA = 0.01;
-
+    double total_rotation = 0;
     int CENTER_X;
     int CENTER_Y;
+    int orig_pts_in_3d[NUM_PTS][DIMENSION];
     int pts_in_3d[NUM_PTS][DIMENSION];
     int pts_in_2d[NUM_PTS][SCREEN_DIMENSION];
 

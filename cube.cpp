@@ -1,9 +1,6 @@
 #include "cube.hpp"
 #include "lin_alg.hpp"
 
-// for debugging
-#include <iostream>
-
 Cube::Cube(int CENTER_X, int CENTER_Y, int width)
 {
     this->CENTER_X = CENTER_X;
@@ -11,16 +8,24 @@ Cube::Cube(int CENTER_X, int CENTER_Y, int width)
 
     int pts[NUM_PTS][DIMENSION] = {
         // Front face vertices
-        {-width / 2, -width / 2, 0}, // Bottom left front
-        {+width / 2, -width / 2, 0}, // Bottom right front
-        {+width / 2, +width / 2, 0}, // Top right front
-        {-width / 2, +width / 2, 0}, // Top left front
+        {-width / 2, -width / 2, -width / 2}, // Bottom left front
+        {width / 2, -width / 2, -width / 2},  // Bottom right front
+        {width / 2, width / 2, -width / 2},   // Top right front
+        {-width / 2, width / 2, -width / 2},  // Top left front
         // Back face vertices
-        {-width / 2, -width / 2, width}, // Bottom left back
-        {+width / 2, -width / 2, width}, // Bottom right back
-        {+width / 2, +width / 2, width}, // Top right back
-        {-width / 2, +width / 2, width}  // Top left back
+        {-width / 2, -width / 2, width / 2}, // Bottom left back
+        {width / 2, -width / 2, width / 2},  // Bottom right back
+        {width / 2, width / 2, width / 2},   // Top right back
+        {-width / 2, width / 2, width / 2}   // Top left back
     };
+
+    for (int pt = 0; pt < NUM_PTS; pt++)
+    {
+        for (int dim = 0; dim < DIMENSION; dim++)
+        {
+            this->orig_pts_in_3d[pt][dim] = pts[pt][dim];
+        }
+    }
 
     for (int pt = 0; pt < NUM_PTS; pt++)
     {
@@ -50,8 +55,6 @@ void Cube::draw_line(SDL_Renderer *renderer, int p1[SCREEN_DIMENSION], int p2[SC
 
 void Cube::draw_cube(SDL_Renderer *renderer)
 {
-    printf("[%d, %d, %d]\n", pts_in_3d[0][X_INDEX], pts_in_3d[0][Y_INDEX], pts_in_3d[0][Z_INDEX]);
-
     // Front face
     draw_line(renderer, pts_in_2d[0], pts_in_2d[1]); // Bottom left to bottom right
     draw_line(renderer, pts_in_2d[1], pts_in_2d[2]); // Bottom right to top right
@@ -77,13 +80,22 @@ void Cube::rotate_cube()
 {
     for (int i = 0; i < NUM_PTS; i++)
     {
-        rotate_pt_x(pts_in_3d[i], THETA);
+        pts_in_3d[i][X_INDEX] = orig_pts_in_3d[i][X_INDEX];
+        pts_in_3d[i][Y_INDEX] = orig_pts_in_3d[i][Y_INDEX];
+        pts_in_3d[i][Z_INDEX] = orig_pts_in_3d[i][Z_INDEX];
     }
 
     for (int i = 0; i < NUM_PTS; i++)
     {
-        rotate_pt_y(pts_in_3d[i], THETA);
+        rotate_pt_x(pts_in_3d[i], total_rotation);
     }
+
+    for (int i = 0; i < NUM_PTS; i++)
+    {
+        rotate_pt_y(pts_in_3d[i], total_rotation);
+    }
+
+    total_rotation += THETA;
 
     project();
 }
