@@ -12,23 +12,29 @@ private:
     static const int X_INDEX = 0;
     static const int Y_INDEX = 1;
     static const int Z_INDEX = 2;
-    const double THETA = 0.01;
+    static const int min_width = 10;
     double total_rotation = 0;
-    int CENTER_X;
-    int CENTER_Y;
-    int orig_pts_in_3d[NUM_PTS][DIMENSION];
+    int center_x;
+    int center_y;
+    int width;
+    int reference_pts_in_3d[NUM_PTS][DIMENSION];
     int pts_in_3d[NUM_PTS][DIMENSION];
     int pts_in_2d[NUM_PTS][SCREEN_DIMENSION];
 
     void draw_line(SDL_Renderer *renderer, int p1[SCREEN_DIMENSION], int p2[SCREEN_DIMENSION]);
     void project();
+    void set_reference_pts(int width);
 
 public:
-    Cube(int CENTER_X, int CENTER_Y, int width);
+    Cube(int center_x, int center_y, int width);
     ~Cube();
 
     void draw_cube(SDL_Renderer *renderer);
-    void rotate_cube();
+    void rotate_cube(double theta);
+    void zoom_in();
+    void zoom_out();
+    void shift_up(int y);
+    void shift_left(int x);
 };
 
 #endif

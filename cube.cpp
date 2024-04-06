@@ -1,37 +1,19 @@
 #include "cube.hpp"
 #include "lin_alg.hpp"
 
-Cube::Cube(int CENTER_X, int CENTER_Y, int width)
+Cube::Cube(int center_x, int center_y, int width)
 {
-    this->CENTER_X = CENTER_X;
-    this->CENTER_Y = CENTER_Y;
+    this->center_x = center_x;
+    this->center_y = center_y;
+    this->width = width;
 
-    int pts[NUM_PTS][DIMENSION] = {
-        // Front face vertices
-        {-width / 2, -width / 2, -width / 2}, // Bottom left front
-        {width / 2, -width / 2, -width / 2},  // Bottom right front
-        {width / 2, width / 2, -width / 2},   // Top right front
-        {-width / 2, width / 2, -width / 2},  // Top left front
-        // Back face vertices
-        {-width / 2, -width / 2, width / 2}, // Bottom left back
-        {width / 2, -width / 2, width / 2},  // Bottom right back
-        {width / 2, width / 2, width / 2},   // Top right back
-        {-width / 2, width / 2, width / 2}   // Top left back
-    };
+    set_reference_pts(width);
 
     for (int pt = 0; pt < NUM_PTS; pt++)
     {
         for (int dim = 0; dim < DIMENSION; dim++)
         {
-            this->orig_pts_in_3d[pt][dim] = pts[pt][dim];
-        }
-    }
-
-    for (int pt = 0; pt < NUM_PTS; pt++)
-    {
-        for (int dim = 0; dim < DIMENSION; dim++)
-        {
-            this->pts_in_3d[pt][dim] = pts[pt][dim];
+            this->pts_in_3d[pt][dim] = reference_pts_in_3d[pt][dim];
         }
     }
 
@@ -39,7 +21,7 @@ Cube::Cube(int CENTER_X, int CENTER_Y, int width)
     {
         for (int dim = 0; dim < SCREEN_DIMENSION; dim++)
         {
-            this->pts_in_2d[pt][dim] = pts_in_3d[pt][dim];
+            this->pts_in_2d[pt][dim] = reference_pts_in_3d[pt][dim];
         }
     }
 }
@@ -76,13 +58,15 @@ void Cube::draw_cube(SDL_Renderer *renderer)
     SDL_RenderPresent(renderer);
 }
 
-void Cube::rotate_cube()
+void Cube::rotate_cube(double theta)
 {
+    total_rotation += theta;
+
     for (int i = 0; i < NUM_PTS; i++)
     {
-        pts_in_3d[i][X_INDEX] = orig_pts_in_3d[i][X_INDEX];
-        pts_in_3d[i][Y_INDEX] = orig_pts_in_3d[i][Y_INDEX];
-        pts_in_3d[i][Z_INDEX] = orig_pts_in_3d[i][Z_INDEX];
+        pts_in_3d[i][X_INDEX] = reference_pts_in_3d[i][X_INDEX];
+        pts_in_3d[i][Y_INDEX] = reference_pts_in_3d[i][Y_INDEX];
+        pts_in_3d[i][Z_INDEX] = reference_pts_in_3d[i][Z_INDEX];
     }
 
     for (int i = 0; i < NUM_PTS; i++)
@@ -95,7 +79,10 @@ void Cube::rotate_cube()
         rotate_pt_y(pts_in_3d[i], total_rotation);
     }
 
-    total_rotation += THETA;
+    for (int i = 0; i < NUM_PTS; i++)
+    {
+        rotate_pt_z(pts_in_3d[i], total_rotation);
+    }
 
     project();
 }
@@ -104,7 +91,56 @@ void Cube::project()
 {
     for (int i = 0; i < NUM_PTS; i++)
     {
-        pts_in_2d[i][X_INDEX] = pts_in_3d[i][X_INDEX] + CENTER_X;
-        pts_in_2d[i][Y_INDEX] = pts_in_3d[i][Y_INDEX] + CENTER_Y;
+        pts_in_2d[i][X_INDEX] = pts_in_3d[i][X_INDEX] + center_x;
+        pts_in_2d[i][Y_INDEX] = pts_in_3d[i][Y_INDEX] + center_y;
     }
+}
+
+void Cube::zoom_in()
+{
+    width = width * 1.1;
+    set_reference_pts(width);
+}
+
+void Cube::zoom_out()
+{
+    if (width / 1.1 > min_width)
+    {
+        width = width / 1.1;
+        set_reference_pts(width);
+    }
+}
+
+void Cube::set_reference_pts(int width)
+{
+    int pts[NUM_PTS][DIMENSION] = {
+        // Front face vertices
+        {-width / 2, -width / 2, -width / 2}, // Bottom left front
+        {width / 2, -width / 2, -width / 2},  // Bottom right front
+        {width / 2, width / 2, -width / 2},   // Top right front
+        {-width / 2, width / 2, -width / 2},  // Top left front
+        // Back face vertices
+        {-width / 2, -width / 2, width / 2}, // Bottom left back
+        {width / 2, -width / 2, width / 2},  // Bottom right back
+        {width / 2, width / 2, width / 2},   // Top right back
+        {-width / 2, width / 2, width / 2}   // Top left back
+    };
+
+    for (int pt = 0; pt < NUM_PTS; pt++)
+    {
+        for (int dim = 0; dim < DIMENSION; dim++)
+        {
+            this->reference_pts_in_3d[pt][dim] = pts[pt][dim];
+        }
+    }
+}
+
+void Cube::shift_up(int y)
+{
+    center_y -= y;
+}
+
+void Cube::shift_left(int x)
+{
+    center_x -= x;
 }
