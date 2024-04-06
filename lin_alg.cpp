@@ -4,8 +4,10 @@
 
 void matrix_vector_multiply(std::vector<std::vector<double>> &matrix, int vector[], int dim)
 {
+    // Array to store the entries for the resultant vector
     int new_vector[dim];
 
+    // Matrix vector multiplication algorithm
     for (int row = 0; row < dim; row++)
     {
         double new_entry = 0;
@@ -16,6 +18,7 @@ void matrix_vector_multiply(std::vector<std::vector<double>> &matrix, int vector
         new_vector[row] = new_entry;
     }
 
+    // Copy the resultant entries into the passed in vector array
     for (int i = 0; i < dim; i++)
     {
         vector[i] = new_vector[i];

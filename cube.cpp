@@ -7,8 +7,10 @@ Cube::Cube(int center_x, int center_y, int width)
     this->center_y = center_y;
     this->width = width;
 
+    // Populating reference_pts_in_3d
     set_reference_pts(width);
 
+    // Populating pts_in_3d
     for (int pt = 0; pt < NUM_PTS; pt++)
     {
         for (int dim = 0; dim < DIMENSION; dim++)
@@ -17,6 +19,7 @@ Cube::Cube(int center_x, int center_y, int width)
         }
     }
 
+    // Populating pts_in_2d
     for (int pt = 0; pt < NUM_PTS; pt++)
     {
         for (int dim = 0; dim < SCREEN_DIMENSION; dim++)
@@ -24,10 +27,6 @@ Cube::Cube(int center_x, int center_y, int width)
             this->pts_in_2d[pt][dim] = reference_pts_in_3d[pt][dim];
         }
     }
-}
-
-Cube::~Cube()
-{
 }
 
 void Cube::draw_line(SDL_Renderer *renderer, int p1[SCREEN_DIMENSION], int p2[SCREEN_DIMENSION])
@@ -62,6 +61,7 @@ void Cube::rotate_cube(double theta)
 {
     total_rotation += theta;
 
+    // Reset points to before any transformations were applied
     for (int i = 0; i < NUM_PTS; i++)
     {
         pts_in_3d[i][X_INDEX] = reference_pts_in_3d[i][X_INDEX];
@@ -69,6 +69,7 @@ void Cube::rotate_cube(double theta)
         pts_in_3d[i][Z_INDEX] = reference_pts_in_3d[i][Z_INDEX];
     }
 
+    // Apply transformations again, but with an increased angle of rotation
     for (int i = 0; i < NUM_PTS; i++)
     {
         rotate_pt_x(pts_in_3d[i], total_rotation);
@@ -98,21 +99,22 @@ void Cube::project()
 
 void Cube::zoom_in()
 {
-    width = width * 1.1;
+    width = width * ZOOM_AMOUNT;
     set_reference_pts(width);
 }
 
 void Cube::zoom_out()
 {
-    if (width / 1.1 > min_width)
+    if (width / ZOOM_AMOUNT > MIN_WIDTH)
     {
-        width = width / 1.1;
+        width = width / ZOOM_AMOUNT;
         set_reference_pts(width);
     }
 }
 
 void Cube::set_reference_pts(int width)
 {
+    // What we want reference_pts_in_3d to look like
     int pts[NUM_PTS][DIMENSION] = {
         // Front face vertices
         {-width / 2, -width / 2, -width / 2}, // Bottom left front
@@ -126,6 +128,7 @@ void Cube::set_reference_pts(int width)
         {-width / 2, width / 2, width / 2}   // Top left back
     };
 
+    // Copying over the entries in pts to reference_pts_in_3d
     for (int pt = 0; pt < NUM_PTS; pt++)
     {
         for (int dim = 0; dim < DIMENSION; dim++)
