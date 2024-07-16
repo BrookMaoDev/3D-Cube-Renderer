@@ -1,94 +1,67 @@
-#ifndef CUBE_H
-#define CUBE_H
+#ifndef CUBE_HPP
+#define CUBE_HPP
 
-#include "SDL.h"
+#include "Shape.hpp"
 
-class Cube
+/**
+ * @class Cube
+ * @brief A class representing a 3D cube that can be rendered using SDL.
+ */
+class Cube : public Shape
 {
-private:
-    static const int DIMENSION = 3;        // Dimension the cube is in
-    static const int SCREEN_DIMENSION = 2; // Dimension of the screen
-
-    int center_x; // X coordinate of the centroid of the cube
-    int center_y; // Y coordinate of the centroid of the cube
-
-    int width;                                 // Distance between any 2 vertices, which can be modified by the user
-    static const int MIN_WIDTH = 10;           // The smallest that width can be made
-    static constexpr double ZOOM_AMOUNT = 1.1; // The ratio to zoom in or out by when prompted to by the user
-
-    double total_rotation = 0; // Tracks how much the cube has been rotated in total
-
-    static const int NUM_PTS = 8;                // Number of vertices
-    int reference_pts_in_3d[NUM_PTS][DIMENSION]; // Position of vertices before transformations relative to (0, 0, 0)
-    int pts_in_3d[NUM_PTS][DIMENSION];           // Position of vertices after transformations relative to (0, 0, 0)
-    int pts_in_2d[NUM_PTS][SCREEN_DIMENSION];    // Position of vertices projected onto the 2D screen
-
-    // Indices for the positions of vertices
-    static const int X_INDEX = 0;
-    static const int Y_INDEX = 1;
-    static const int Z_INDEX = 2;
-
-    /**
-     * @brief Draws an undirected line
-     * @param renderer Renderer the line is rendered in
-     * @param p1 A point in 2D
-     * @param p2 A point in 2D
-     */
-    void draw_line(SDL_Renderer *renderer, int p1[SCREEN_DIMENSION], int p2[SCREEN_DIMENSION]);
-
-    /**
-     * @brief Updates pts_in_2d according to pts_in_3d
-     */
-    void project();
-
-    /**
-     * @brief Populates reference_pts_in_3d
-     * @param width Width of cube
-     */
-    void set_reference_pts(int width);
-
 public:
     /**
-     * @brief Constructor
-     * @param center_x X coordinate of the centroid of the cube
-     * @param center_y Y coordinate of the centroid of the cube
-     * @param width Width of cube
+     * @brief Constructor to initialize the cube with a renderer, color, center position, and width.
+     * @param renderer The SDL renderer.
+     * @param color The color of the cube.
+     * @param center_x The x-coordinate of the cube's center.
+     * @param center_y The y-coordinate of the cube's center.
+     * @param width The width of the cube.
      */
-    Cube(int center_x, int center_y, int width);
+    Cube(SDL_Renderer *renderer, SDL_Color color, int center_x, int center_y, int width)
+        : Shape(renderer, color, center_x, center_y)
+    {
+        // Initialize the cube's 3D points relative to the center
+        int half_width = width / 2;
+        pts_relative_to_center_3d.push_back(Point(-half_width, -half_width, -half_width)); // Bottom left back
+        pts_relative_to_center_3d.push_back(Point(half_width, -half_width, -half_width));  // Bottom right back
+        pts_relative_to_center_3d.push_back(Point(half_width, half_width, -half_width));   // Top right back
+        pts_relative_to_center_3d.push_back(Point(-half_width, half_width, -half_width));  // Top left back
+        pts_relative_to_center_3d.push_back(Point(-half_width, -half_width, half_width));  // Bottom left front
+        pts_relative_to_center_3d.push_back(Point(half_width, -half_width, half_width));   // Bottom right front
+        pts_relative_to_center_3d.push_back(Point(half_width, half_width, half_width));    // Top right front
+        pts_relative_to_center_3d.push_back(Point(-half_width, half_width, half_width));   // Top left front
+    }
 
     /**
-     * @brief Draws the cube with the current information onto the screen
-     * @param renderer Renderer the cube is rendered in
+     * @brief Draws the cube on the screen.
+     * @param offset_x The x offset for drawing.
+     * @param offset_y The y offset for drawing.
+     * @param scale The scale for drawing.
      */
-    void draw_cube(SDL_Renderer *renderer);
+    void draw(int offset_x, int offset_y, double scale) override
+    {
+        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+        project();
 
-    /**
-     * @brief Rotates each point in the cube
-     * @param theta Angle in radians to rotate by
-     */
-    void rotate_cube(double theta);
+        // Draw back face
+        drawLine(pts_absolute_2d[0], pts_absolute_2d[1]);
+        drawLine(pts_absolute_2d[1], pts_absolute_2d[2]);
+        drawLine(pts_absolute_2d[2], pts_absolute_2d[3]);
+        drawLine(pts_absolute_2d[3], pts_absolute_2d[0]);
 
-    /**
-     * @brief Increases the cube’s width by a factor of ZOOM_AMOUNT
-     */
-    void zoom_in();
+        // Draw front face
+        drawLine(pts_absolute_2d[4], pts_absolute_2d[5]);
+        drawLine(pts_absolute_2d[5], pts_absolute_2d[6]);
+        drawLine(pts_absolute_2d[6], pts_absolute_2d[7]);
+        drawLine(pts_absolute_2d[7], pts_absolute_2d[4]);
 
-    /**
-     * @brief Decreases the cube’s width by a factor of ZOOM_AMOUNT
-     */
-    void zoom_out();
-
-    /**
-     * @brief Updates the center_y field variable
-     * @param y Amount to shift up by
-     */
-    void shift_up(int y);
-
-    /**
-     * @brief Updates the center_x field variable
-     * @param y Amount to shift left by
-     */
-    void shift_left(int x);
+        // Draw the connections between the front and back faces
+        drawLine(pts_absolute_2d[0], pts_absolute_2d[4]);
+        drawLine(pts_absolute_2d[1], pts_absolute_2d[5]);
+        drawLine(pts_absolute_2d[2], pts_absolute_2d[6]);
+        drawLine(pts_absolute_2d[3], pts_absolute_2d[7]);
+    }
 };
 
-#endif
+#endif // CUBE_HPP
