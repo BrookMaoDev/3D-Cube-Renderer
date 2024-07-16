@@ -21,12 +21,13 @@ int main(int argc, char *argv[])
     // Create an SDL window and renderer
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
-    SDL_CreateWindowAndRenderer(INITIAL_SCREEN_WIDTH, INITIAL_SCREEN_HEIGHT, 0, &window, &renderer);
+    SDL_CreateWindowAndRenderer(INITIAL_SCREEN_WIDTH, INITIAL_SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer);
     SDL_SetWindowTitle(window, "3D Rendering Engine");
 
     // Create a screen and add shapes to it
     Screen screen(renderer);
-    screen.addShape(new Cube(renderer, SDL_Color{255, 0, 0, 255}, INITIAL_SCREEN_WIDTH / 2, INITIAL_SCREEN_HEIGHT / 2, 200));
+    screen.addShape(new Cube(renderer, SDL_Color{255, 0, 0, 255}, INITIAL_SCREEN_WIDTH / 4, INITIAL_SCREEN_HEIGHT / 4, 200));
+    screen.addShape(new Cube(renderer, SDL_Color{0, 255, 0, 255}, 3 * INITIAL_SCREEN_WIDTH / 4, 3 * INITIAL_SCREEN_HEIGHT / 4, 200));
 
     SDL_Event event;
     bool running = true;
