@@ -43,6 +43,7 @@ public:
     {
         SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
         project();
+        convertWorldPointsToScreen(offset_x, offset_y, scale);
 
         // Draw back face
         drawLine(pts_absolute_2d[0], pts_absolute_2d[1]);

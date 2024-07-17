@@ -8,6 +8,24 @@ const int INITIAL_SCREEN_WIDTH = 800;      ///< Initial screen width.
 const int INITIAL_SCREEN_HEIGHT = 600;     ///< Initial screen height.
 
 /**
+ * @brief Generates a random color.
+ * @return A random color.
+ */
+SDL_Color getRandomColor()
+{
+    const int minBrightness = 128; // Minimum value to ensure color visibility on black
+    const int maxBrightness = 255;
+
+    SDL_Color color;
+    color.r = minBrightness + (rand() % (maxBrightness - minBrightness + 1));
+    color.g = minBrightness + (rand() % (maxBrightness - minBrightness + 1));
+    color.b = minBrightness + (rand() % (maxBrightness - minBrightness + 1));
+    color.a = 255; // Opaque
+
+    return color;
+}
+
+/**
  * @brief Main function to initialize SDL, create a window and renderer, and run the rendering loop.
  * @param argc Number of command-line arguments.
  * @param argv Array of command-line arguments.
@@ -26,11 +44,12 @@ int main(int argc, char *argv[])
 
     // Create a screen and add shapes to it
     Screen screen(renderer);
-    screen.addShape(new Cube(renderer, SDL_Color{255, 0, 0, 255}, INITIAL_SCREEN_WIDTH / 4, INITIAL_SCREEN_HEIGHT / 4, 200));
-    screen.addShape(new Cube(renderer, SDL_Color{0, 255, 0, 255}, 3 * INITIAL_SCREEN_WIDTH / 4, 3 * INITIAL_SCREEN_HEIGHT / 4, 200));
+    screen.addShape(new Cube(renderer, getRandomColor(), INITIAL_SCREEN_WIDTH / 4, INITIAL_SCREEN_HEIGHT / 4, 200));
+    screen.addShape(new Cube(renderer, getRandomColor(), 3 * INITIAL_SCREEN_WIDTH / 4, 3 * INITIAL_SCREEN_HEIGHT / 4, 200));
 
     SDL_Event event;
     bool running = true;
+    bool mouse_down = false;
 
     // Main rendering loop
     while (running)
@@ -38,9 +57,48 @@ int main(int argc, char *argv[])
         // Handle SDL events
         while (SDL_PollEvent(&event))
         {
-            if (event.type == SDL_QUIT)
+            switch (event.type)
             {
+            case SDL_QUIT:
                 running = false;
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                mouse_down = true;
+                screen.setPanStart(event.button.x, event.button.y);
+                break;
+            case SDL_MOUSEBUTTONUP:
+                mouse_down = false;
+                break;
+            case SDL_MOUSEWHEEL:
+                int mouse_x, mouse_y;
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+
+                if (event.wheel.y > 0)
+                {
+                    screen.zoomIn(mouse_x, mouse_y);
+                }
+                else if (event.wheel.y < 0)
+                {
+                    screen.zoomOut(mouse_x, mouse_y);
+                }
+                break;
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym)
+                {
+                case SDLK_LEFT:
+                    screen.slowDown();
+                    break;
+                case SDLK_RIGHT:
+                    screen.speedUp();
+                    break;
+                }
+                break;
+            default:
+                if (mouse_down)
+                {
+                    screen.pan(event.button.x, event.button.y);
+                }
+                break;
             }
         }
 

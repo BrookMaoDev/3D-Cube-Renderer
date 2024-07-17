@@ -20,9 +20,12 @@ protected:
     std::vector<SDL_Point> pts_absolute_2d;       ///< Points in absolute 2D space after projection.
     double theta = 0.01;                          ///< Incremental angle of rotation.
     double total_rotation = 0;                    ///< Total accumulated rotation.
+    static constexpr double deltaTheta = 0.001;   ///< Incremental change in rotation speed.
+    static constexpr double minTheta = 0;         ///< Minimum rotation speed.
+    static constexpr double maxTheta = 0.1;       ///< Maximum rotation speed.
 
     /**
-     * @brief Projects the 3D points relative to the center to 2D absolute coordinates.
+     * @brief Projects the 3D points relative to the center to 2D absolute world coordinates.
      */
     void project()
     {
@@ -43,6 +46,33 @@ protected:
     void drawLine(const SDL_Point &pt1, const SDL_Point &pt2)
     {
         SDL_RenderDrawLine(renderer, pt1.x, pt1.y, pt2.x, pt2.y);
+    }
+
+    /**
+     * @brief Converts a point from world coordinates to screen coordinates.
+     * @param pt The point in world coordinates.
+     * @param offset_x The x offset for drawing.
+     * @param offset_y The y offset for drawing.
+     * @param scale The scale for drawing.
+     * @return The point in screen coordinates.
+     */
+    SDL_Point worldToScreen(const SDL_Point &pt, int offset_x, int offset_y, double scale)
+    {
+        return SDL_Point{static_cast<int>((pt.x + offset_x) * scale), static_cast<int>((pt.y + offset_y) * scale)};
+    }
+
+    /**
+     * @brief Converts all world points to screen points.
+     * @param offset_x The x offset for drawing.
+     * @param offset_y The y offset for drawing.
+     * @param scale The scale for drawing.
+     */
+    void convertWorldPointsToScreen(int offset_x, int offset_y, double scale)
+    {
+        for (SDL_Point &pt : pts_absolute_2d)
+        {
+            pt = worldToScreen(pt, offset_x, offset_y, scale);
+        }
     }
 
 public:
@@ -84,6 +114,24 @@ public:
         {
             pt.rotate(total_rotation);
         }
+    }
+
+    /**
+     * @brief Increases the speed of rotation.
+     */
+    void speedUp()
+    {
+        double newTheta = theta + Shape::deltaTheta;
+        theta = (newTheta <= maxTheta) ? newTheta : maxTheta;
+    }
+
+    /**
+     * @brief Decreases the speed of rotation.
+     */
+    void slowDown()
+    {
+        double newTheta = theta - Shape::deltaTheta;
+        theta = (newTheta >= minTheta) ? newTheta : minTheta;
     }
 
     /**
