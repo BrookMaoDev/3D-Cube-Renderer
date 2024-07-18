@@ -1,6 +1,9 @@
 #include "SDL.h"
 #include "Screen.hpp"
 #include "Cube.hpp"
+#include "Tetrahedron.hpp"
+#include "Octahedron.hpp"
+#include "SquareBasedPyramid.hpp"
 
 const int FPS = 60;                        ///< Frames per second.
 const int MILLISECONDS_DELAY = 1000 / FPS; ///< Delay per frame in milliseconds.
@@ -40,12 +43,17 @@ int main(int argc, char *argv[])
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
     SDL_CreateWindowAndRenderer(INITIAL_SCREEN_WIDTH, INITIAL_SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer);
+
+    SDL_Surface *icon = SDL_LoadBMP("icon.bmp");
+    SDL_SetWindowIcon(window, icon);
     SDL_SetWindowTitle(window, "3D Rendering Engine");
 
     // Create a screen and add shapes to it
     Screen screen(renderer);
-    screen.addShape(new Cube(renderer, getRandomColor(), INITIAL_SCREEN_WIDTH / 4, INITIAL_SCREEN_HEIGHT / 4, 200));
-    screen.addShape(new Cube(renderer, getRandomColor(), 3 * INITIAL_SCREEN_WIDTH / 4, 3 * INITIAL_SCREEN_HEIGHT / 4, 200));
+    screen.addShape(new Cube(renderer, getRandomColor(), INITIAL_SCREEN_WIDTH / 4, INITIAL_SCREEN_HEIGHT / 4, 150));
+    screen.addShape(new Tetrahedron(renderer, getRandomColor(), 3 * INITIAL_SCREEN_WIDTH / 4, INITIAL_SCREEN_HEIGHT / 4, 150));
+    screen.addShape(new Octahedron(renderer, getRandomColor(), INITIAL_SCREEN_WIDTH / 4, 3 * INITIAL_SCREEN_HEIGHT / 4, 150));
+    screen.addShape(new SquareBasedPyramid(renderer, getRandomColor(), 3 * INITIAL_SCREEN_WIDTH / 4, 3 * INITIAL_SCREEN_HEIGHT / 4, 150));
 
     SDL_Event event;
     bool running = true;
