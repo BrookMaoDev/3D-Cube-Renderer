@@ -23,11 +23,11 @@ public:
     {
         // Initialize the square-based pyramid's 3D points relative to the center
         int half_width = width / 2;
-        pts_relative_to_center_3d.push_back(Point(-half_width, half_width, -half_width)); // Bottom left back
-        pts_relative_to_center_3d.push_back(Point(half_width, half_width, -half_width));  // Bottom right back
-        pts_relative_to_center_3d.push_back(Point(-half_width, half_width, half_width));  // Bottom left front
-        pts_relative_to_center_3d.push_back(Point(half_width, half_width, half_width));   // Bottom right front
-        pts_relative_to_center_3d.push_back(Point(0, -half_width, 0));                    // Top
+        pts_relative_to_center_3d.emplace_back(-half_width, half_width, -half_width); // Bottom left back
+        pts_relative_to_center_3d.emplace_back(half_width, half_width, -half_width);  // Bottom right back
+        pts_relative_to_center_3d.emplace_back(-half_width, half_width, half_width);  // Bottom left front
+        pts_relative_to_center_3d.emplace_back(half_width, half_width, half_width);   // Bottom right front
+        pts_relative_to_center_3d.emplace_back(0, -half_width, 0);                    // Apex
     }
 
     /**
@@ -42,17 +42,17 @@ public:
         project();
         convertWorldPointsToScreen(offset_x, offset_y, scale);
 
-        // Draw the base
+        // Draw the base of the pyramid
         drawLine(pts_absolute_2d[0], pts_absolute_2d[1]);
         drawLine(pts_absolute_2d[1], pts_absolute_2d[3]);
         drawLine(pts_absolute_2d[3], pts_absolute_2d[2]);
         drawLine(pts_absolute_2d[2], pts_absolute_2d[0]);
 
-        // Draw the sides
-        drawLine(pts_absolute_2d[0], pts_absolute_2d[4]);
-        drawLine(pts_absolute_2d[1], pts_absolute_2d[4]);
-        drawLine(pts_absolute_2d[2], pts_absolute_2d[4]);
-        drawLine(pts_absolute_2d[3], pts_absolute_2d[4]);
+        // Draw the four triangular sides of the pyramid
+        drawLine(pts_absolute_2d[0], pts_absolute_2d[4]); // Side 1
+        drawLine(pts_absolute_2d[1], pts_absolute_2d[4]); // Side 2
+        drawLine(pts_absolute_2d[2], pts_absolute_2d[4]); // Side 3
+        drawLine(pts_absolute_2d[3], pts_absolute_2d[4]); // Side 4
     }
 };
 

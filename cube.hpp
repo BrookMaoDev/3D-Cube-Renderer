@@ -23,14 +23,14 @@ public:
     {
         // Initialize the cube's 3D points relative to the center
         int half_width = width / 2;
-        pts_relative_to_center_3d.push_back(Point(-half_width, -half_width, -half_width)); // Bottom left back
-        pts_relative_to_center_3d.push_back(Point(half_width, -half_width, -half_width));  // Bottom right back
-        pts_relative_to_center_3d.push_back(Point(half_width, half_width, -half_width));   // Top right back
-        pts_relative_to_center_3d.push_back(Point(-half_width, half_width, -half_width));  // Top left back
-        pts_relative_to_center_3d.push_back(Point(-half_width, -half_width, half_width));  // Bottom left front
-        pts_relative_to_center_3d.push_back(Point(half_width, -half_width, half_width));   // Bottom right front
-        pts_relative_to_center_3d.push_back(Point(half_width, half_width, half_width));    // Top right front
-        pts_relative_to_center_3d.push_back(Point(-half_width, half_width, half_width));   // Top left front
+        pts_relative_to_center_3d.emplace_back(-half_width, -half_width, -half_width); // Bottom left back
+        pts_relative_to_center_3d.emplace_back(half_width, -half_width, -half_width);  // Bottom right back
+        pts_relative_to_center_3d.emplace_back(half_width, half_width, -half_width);   // Top right back
+        pts_relative_to_center_3d.emplace_back(-half_width, half_width, -half_width);  // Top left back
+        pts_relative_to_center_3d.emplace_back(-half_width, -half_width, half_width);  // Bottom left front
+        pts_relative_to_center_3d.emplace_back(half_width, -half_width, half_width);   // Bottom right front
+        pts_relative_to_center_3d.emplace_back(half_width, half_width, half_width);    // Top right front
+        pts_relative_to_center_3d.emplace_back(-half_width, half_width, half_width);   // Top left front
     }
 
     /**

@@ -27,7 +27,7 @@ public:
      * @brief Constructor to initialize the screen with a renderer.
      * @param renderer The SDL renderer.
      */
-    Screen(SDL_Renderer *renderer) : renderer(renderer) {}
+    explicit Screen(SDL_Renderer *renderer) : renderer(renderer) {}
 
     /**
      * @brief Adds a shape to the screen and sets its renderer.
@@ -95,19 +95,16 @@ public:
      */
     void zoomIn(int mouse_x, int mouse_y)
     {
+        // Adjust scale factor for zooming in
         scale *= zoom_in_factor;
 
-        // Where the point where the mouse is after zooming in.
-        int new_x_after_zoom = mouse_x * zoom_in_factor;
-        int new_y_after_zoom = mouse_y * zoom_in_factor;
+        // Calculate the displacement caused by zooming in
+        int dx = static_cast<int>(mouse_x * (zoom_in_factor - 1) / scale);
+        int dy = static_cast<int>(mouse_y * (zoom_in_factor - 1) / scale);
 
-        // Displacement of the point where the mouse is after zooming in.
-        int dx = new_x_after_zoom - mouse_x;
-        int dy = new_y_after_zoom - mouse_y;
-
-        // Adjust the offset based on the displacement.
-        offset_x -= static_cast<int>(dx / scale);
-        offset_y -= static_cast<int>(dy / scale);
+        // Adjust the offset based on the displacement
+        offset_x -= dx;
+        offset_y -= dy;
     }
 
     /**
@@ -117,19 +114,16 @@ public:
      */
     void zoomOut(int mouse_x, int mouse_y)
     {
+        // Adjust scale factor for zooming out
         scale *= zoom_out_factor;
 
-        // Where the point where the mouse is after zooming out.
-        int new_x_after_zoom = mouse_x * zoom_out_factor;
-        int new_y_after_zoom = mouse_y * zoom_out_factor;
+        // Calculate the displacement caused by zooming out
+        int dx = static_cast<int>(mouse_x * (zoom_out_factor - 1) / scale);
+        int dy = static_cast<int>(mouse_y * (zoom_out_factor - 1) / scale);
 
-        // Displacement of the point where the mouse is after zooming out.
-        int dx = new_x_after_zoom - mouse_x;
-        int dy = new_y_after_zoom - mouse_y;
-
-        // Adjust the offset based on the displacement.
-        offset_x -= static_cast<int>(dx / scale);
-        offset_y -= static_cast<int>(dy / scale);
+        // Adjust the offset based on the displacement
+        offset_x -= dx;
+        offset_y -= dy;
     }
 
     /**

@@ -4,11 +4,13 @@
 #include "Tetrahedron.hpp"
 #include "Octahedron.hpp"
 #include "SquareBasedPyramid.hpp"
+#include <cstdlib> // For std::rand() and std::srand()
+#include <ctime>   // For std::time()
 
-const int FPS = 60;                        ///< Frames per second.
+const int FPS = 100;                       ///< Frames per second.
 const int MILLISECONDS_DELAY = 1000 / FPS; ///< Delay per frame in milliseconds.
 const int INITIAL_SCREEN_WIDTH = 800;      ///< Initial screen width.
-const int INITIAL_SCREEN_HEIGHT = 600;     ///< Initial screen height.
+const int INITIAL_SCREEN_HEIGHT = 600;     ///< Initial screen height;
 
 /**
  * @brief Generates a random color.
@@ -20,9 +22,9 @@ SDL_Color getRandomColor()
     const int maxBrightness = 255;
 
     SDL_Color color;
-    color.r = minBrightness + (rand() % (maxBrightness - minBrightness + 1));
-    color.g = minBrightness + (rand() % (maxBrightness - minBrightness + 1));
-    color.b = minBrightness + (rand() % (maxBrightness - minBrightness + 1));
+    color.r = minBrightness + (std::rand() % (maxBrightness - minBrightness + 1));
+    color.g = minBrightness + (std::rand() % (maxBrightness - minBrightness + 1));
+    color.b = minBrightness + (std::rand() % (maxBrightness - minBrightness + 1));
     color.a = 255; // Opaque
 
     return color;
@@ -36,16 +38,32 @@ SDL_Color getRandomColor()
  */
 int main(int argc, char *argv[])
 {
+    // Initialize random number generator
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
     // Initialize SDL video subsystem
-    SDL_Init(SDL_INIT_VIDEO);
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    {
+        SDL_Log("Failed to initialize SDL: %s", SDL_GetError());
+        return 1;
+    }
 
     // Create an SDL window and renderer
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
-    SDL_CreateWindowAndRenderer(INITIAL_SCREEN_WIDTH, INITIAL_SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer);
+    if (SDL_CreateWindowAndRenderer(INITIAL_SCREEN_WIDTH, INITIAL_SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer) != 0)
+    {
+        SDL_Log("Failed to create window or renderer: %s", SDL_GetError());
+        SDL_Quit();
+        return 1;
+    }
 
     SDL_Surface *icon = SDL_LoadBMP("icon.bmp");
-    SDL_SetWindowIcon(window, icon);
+    if (icon != nullptr)
+    {
+        SDL_SetWindowIcon(window, icon);
+        SDL_FreeSurface(icon);
+    }
     SDL_SetWindowTitle(window, "3D Rendering Engine");
 
     // Create a screen and add shapes to it
@@ -58,6 +76,7 @@ int main(int argc, char *argv[])
     SDL_Event event;
     bool running = true;
     bool mouse_down = false;
+    bool paused = false;
 
     // Main rendering loop
     while (running)
@@ -78,6 +97,7 @@ int main(int argc, char *argv[])
                 mouse_down = false;
                 break;
             case SDL_MOUSEWHEEL:
+            {
                 int mouse_x, mouse_y;
                 SDL_GetMouseState(&mouse_x, &mouse_y);
 
@@ -89,7 +109,8 @@ int main(int argc, char *argv[])
                 {
                     screen.zoomOut(mouse_x, mouse_y);
                 }
-                break;
+            }
+            break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym)
                 {
@@ -98,6 +119,9 @@ int main(int argc, char *argv[])
                     break;
                 case SDLK_RIGHT:
                     screen.speedUp();
+                    break;
+                case SDLK_SPACE:
+                    paused = !paused;
                     break;
                 }
                 break;
@@ -117,7 +141,12 @@ int main(int argc, char *argv[])
         // Set the default drawing color to white and draw the shapes
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         screen.draw();
-        screen.rotate();
+
+        // Rotate the shapes if not paused
+        if (!paused)
+        {
+            screen.rotate();
+        }
 
         // Present the renderer to the screen
         SDL_RenderPresent(renderer);

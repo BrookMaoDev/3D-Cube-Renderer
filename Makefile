@@ -2,7 +2,7 @@
 CXXFLAGS := -Idependencies\include\SDL2
 
 # Linker flags
-LDFLAGS := -Ldependencies\lib
+LDFLAGS := -Ldependencies\lib -mwindows
 
 # Libraries
 LDLIBS := -lmingw32 -lSDL2main -lSDL2

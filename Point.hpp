@@ -10,9 +10,9 @@
 class Point
 {
 private:
-    int x;         ///< The x-coordinate of the point.
-    int y;         ///< The y-coordinate of the point.
-    int z;         ///< The z-coordinate of the point.
+    int x;         ///< The original x-coordinate of the point.
+    int y;         ///< The original y-coordinate of the point.
+    int z;         ///< The original z-coordinate of the point.
     int rotated_x; ///< The x-coordinate after rotation.
     int rotated_y; ///< The y-coordinate after rotation.
     int rotated_z; ///< The z-coordinate after rotation.
@@ -24,7 +24,8 @@ public:
      * @param y The y-coordinate.
      * @param z The z-coordinate.
      */
-    Point(int x, int y, int z) : x(x), y(y), z(z), rotated_x(x), rotated_y(y), rotated_z(z) {}
+    Point(int x, int y, int z)
+        : x(x), y(y), z(z), rotated_x(x), rotated_y(y), rotated_z(z) {}
 
     /**
      * @brief Gets the x-coordinate after rotation.

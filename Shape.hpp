@@ -21,7 +21,7 @@ protected:
     double theta = 0.01;                          ///< Incremental angle of rotation.
     double total_rotation = 0;                    ///< Total accumulated rotation.
     static constexpr double deltaTheta = 0.001;   ///< Incremental change in rotation speed.
-    static constexpr double minTheta = 0;         ///< Minimum rotation speed.
+    static constexpr double minTheta = 0.005;     ///< Minimum rotation speed.
     static constexpr double maxTheta = 0.1;       ///< Maximum rotation speed.
 
     /**
