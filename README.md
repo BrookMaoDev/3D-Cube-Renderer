@@ -31,3 +31,9 @@ or simply:
 ```sh
 make
 ```
+
+## Image Attribution
+
+![Icon](icon.bmp)
+
+Image attribution for the following <a href="https://www.flaticon.com/free-icons/pyramid" title="pyramid icons">Pyramid icons created by Freepik - Flaticon</a> which I used for the icon of my application.
