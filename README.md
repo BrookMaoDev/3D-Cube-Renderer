@@ -4,7 +4,7 @@ An object-oriented C++ and SDL program capable of rendering various 3D shapes.
 
 ![Demo](Demo.gif)
 
-The actual program is much smoother than the choppy gif as my screen recorder is unable to handle recording the 100 frames per second 😅
+The actual program is much smoother than the choppy gif as my screen recorder is unable to handle recording 100 frames per second 😅
 
 ## Controls
 
