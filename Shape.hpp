@@ -30,7 +30,7 @@ protected:
     void project()
     {
         pts_absolute_2d.clear();
-        for (Point &pt : pts_relative_to_center_3d)
+        for (const Point &pt : pts_relative_to_center_3d)
         {
             int x = center_x + pt.getRotatedX();
             int y = center_y + pt.getRotatedY();
